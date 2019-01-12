@@ -6,7 +6,7 @@ const server = http.createServer();
 
 server.on("request", (req, res)=>{
     
-    readable = fs.createReadStream(path.join(__dirname, "./file.txt"));
+    let readable = fs.createReadStream(path.join(__dirname, "./file.txt"));
     readable.setEncoding("utf8");
     
     readable.on("error", (err)=>{
@@ -15,6 +15,7 @@ server.on("request", (req, res)=>{
     });
     readable.on("end", ()=>{
         res.end();
+        readable.destroy();
     });
     
     readable.pipe(res);
