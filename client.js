@@ -39,15 +39,38 @@ let startInterval = (idx) => {
         stats["data"][idx]["time"]++;
     }, 1);
 
-}
+};
+
+function avgInstance() {
+    
+    if(!new.target) {
+        return avgInstance();
+    }
+    this.counter = 0;
+    this.totalVal = 0;
+    this.push = (value) => {
+        this.counter++;
+        this.totalVal += value;
+    }
+    this.average = () => {
+        return this.totalVal / (this.counter || 1);
+    }
+    return this;
+
+};
 
 let cb = () => {
 
     if(++counter == 1024) {
         clearTimeout(writeInterval);
+        let avgTime = new avgInstance();
+        let avgBytes = new avgInstance();
         for(prop of stats) {
-            console.log(prop);
+            avgTime.push(prop.time);
+            avgBytes.push(prop.bytes);
         }
+        console.log(`\nConcurrent Writes: ${Math.floor(avgConcurrentWrites)}`);
+        console.log(`Bytes: ${(avgBytes.average() / avgTime.average()).toFixed(2)} bytes/ms\n`);
     }
 
 };
